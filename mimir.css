@@ -1,0 +1,129 @@
+#mimirBubble {
+    width: 60px;
+    height: 60px;
+    background: #3770ed;
+    color: white;
+    border-radius: 50%;
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#mimirChat {
+    width: min(375px, 80vw);
+    height: min(600px, 70vh);
+    overflow: hidden;
+    background: white;
+    border-radius: 16px;
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.2);
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 9999;
+    padding: 8px;
+    padding-top: 60px;
+}
+
+#mimirHeader {
+    background: #3770ed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    gap: 8px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 60px;
+}
+
+#mimirTopText {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+#mimirMessageContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-sizing: border-box;
+    width: 100%;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+#mimirChatIcon {
+    transition: transform 0.3s ease;
+}
+
+#mimirInput {
+    width: 100%;
+    border: none;
+}
+
+#mimirInput::-webkit-input-placeholder {
+    opacity: 0.6;
+}
+
+#mimirInput::-moz-placeholder {
+    opacity: 0.6;
+}
+
+#mimirInput::-ms-input-placeholder {
+    opacity: 0.6;
+}
+
+#mimirInput::placeholder {
+    opacity: 0.6;
+}
+
+#mimirInput:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: initial !important;
+}
+
+#mimirSendIcon {
+    cursor: pointer;
+}
+
+#mimirSendIcon:hover {
+    transform: scale(1.1);
+}
+
+#mimirInputForm {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 16px 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#mimirUserMessage {
+    margin-left: auto;
+    background-color: #d3d3d3;
+    color: black;
+    padding: 10px;
+    border-radius: 10px;
+    width: fit-content;
+}
+
+#mimirBotMessage {
+    margin-right: auto;
+    background: #3770ed;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    width: fit-content;
+}
