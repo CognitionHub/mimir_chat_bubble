@@ -89,7 +89,7 @@ sendIcon.onclick = () => {
 }
 inputForm.appendChild(sendIcon);
 
-addMessage("Hei, hvordan kan jeg hjelpe deg?", false);
+addMessage("Hei, høtt kan jeg hjelpe deg?", false);
 
 bubble.onclick = () => {
     const chatShowing = chat.style.display === "flex";
@@ -111,3 +111,8 @@ document.addEventListener("click", function (event) {
         chat.style.display = "none";
     }
 });
+
+// If running on localhost we want to show the chat by default
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    bubble.click();
+}
