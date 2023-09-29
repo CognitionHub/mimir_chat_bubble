@@ -55,7 +55,7 @@ header.id = "mimirHeader";
 chat.appendChild(header);
 
 const botIcon = document.createElement("i");
-botIcon.className = "fas fa-robot fa-2x";
+botIcon.className = "fas fa-smile fa-lg";
 header.appendChild(botIcon);
 
 const topText = document.createElement("div");
@@ -89,7 +89,7 @@ sendIcon.onclick = () => {
 }
 inputForm.appendChild(sendIcon);
 
-addMessage("Hei, høtt kan jeg hjelpe deg?", false);
+addMessage("Hei, hva kan jeg hjelpe deg?", false);
 
 bubble.onclick = () => {
     const chatShowing = chat.style.display === "flex";
