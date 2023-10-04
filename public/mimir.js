@@ -9,9 +9,48 @@ bubble.appendChild(chatIcon);
 const chat = document.createElement("div");
 chat.id = "mimirChat";
 
-const callApi = async (text) => {
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    return "Halla, har ikke koblet opp mot API enda."
+const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000'
+    : 'https://your-azure-url-here.com';
+
+const initiateConversation = async () => {
+    try {
+        const customerId = getCookieId(); // TODO make this function
+        const url = `${apiUrl}/conversations/?company_name=sprell&customer_id=${encodeURIComponent(customerId)}`;
+        const response = await fetch(url, { method: 'POST' });
+
+        if (!response.ok) {
+            throw new Error('Could not initiate conversation' + response.statusText);
+        }
+
+        const data = await response.json();
+        setInitialMessages(data.messages); // TODO make this function
+        return data.id;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const sendMessage = async (conversationId, messageContent) => {
+    try {
+        const url = `${apiUrl}/conversations/${encodeURIComponent(conversationId)}/messages/?message_content=${encodeURIComponent(messageContent)}`;
+        const response = await fetch(url, { method: 'POST' });
+
+        if (!response.ok) {
+            throw new Error('Could not send message' + response.statusText);
+        }
+
+        const data = await response.json();
+        // I only want the last message of data.messages
+        addMessage(data.messages[data.messages.length - 1].content, false); // TODO make this function
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// Helper function to get cookie ID
+const getCookieId = () => {
+    return "cookie3";
 }
 
 const loading = document.createElement("div");
