@@ -13,11 +13,18 @@ const apiUrl = window.location.hostname === 'localhost' || window.location.hostn
     ? 'http://localhost:8000'
     : 'https://your-azure-url-here.com';
 
+const apiKey = "sdlfkgh-glsiygewoi--golsihgioweg"
+
 const initiateConversation = async () => {
     try {
         const customerId = getCookieId(); // TODO make this function
         const url = `${apiUrl}/conversations/?company_name=sprell&customer_id=${encodeURIComponent(customerId)}`;
-        const response = await fetch(url, { method: 'POST' });
+        const response = await fetch(url, { 
+            method: 'POST',
+            headers: {
+                "access_token": apiKey
+            }
+         });
 
         if (!response.ok) {
             throw new Error('Could not initiate conversation' + response.statusText);
@@ -33,8 +40,14 @@ const initiateConversation = async () => {
 
 const sendMessage = async (conversationId, messageContent) => {
     try {
-        const url = `${apiUrl}/conversations/${encodeURIComponent(conversationId)}/messages/?message_content=${encodeURIComponent(messageContent)}`;
-        const response = await fetch(url, { method: 'POST' });
+        const url = `${apiUrl}/conversations/${encodeURIComponent(conversationId)}/messages?message_content=${encodeURIComponent(messageContent)}`;
+        const response = await fetch(url, { 
+            method: 'POST',
+            headers: {
+                "access_token": apiKey
+            }
+        
+     });
 
         if (!response.ok) {
             throw new Error('Could not send message' + response.statusText);
@@ -74,7 +87,7 @@ const addMessage = (text, isUser) => {
             message.id = "mimirUserMessage";
             input.value = "";
             input.focus();
-            callApi(text).then((response) => {
+            sendMessage(6,text).then((response) => {
                 addMessage(response, false);
             })
         } else {
@@ -149,6 +162,11 @@ document.addEventListener("click", function (event) {
     if (!chat.contains(event.target) && !bubble.contains(event.target)) {
         chat.style.display = "none";
     }
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const conversationId = await initiateConversation();
+    console.log(conversationId);
 });
 
 // If running on localhost we want to show the chat by default
