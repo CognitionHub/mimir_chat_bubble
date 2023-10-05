@@ -17,7 +17,8 @@ const apiKey = "sdlfkgh-glsiygewoi--golsihgioweg"
 
 const initiateConversation = async () => {
     try {
-        const customerId = getCookieId(); // TODO make this function
+        const customerId = "cookie3";
+        // const customerId = window.$mimirCustomerID;
         const url = `${apiUrl}/conversations/?company_name=sprell&customer_id=${encodeURIComponent(customerId)}`;
         const response = await fetch(url, { 
             method: 'POST',
@@ -55,15 +56,10 @@ const sendMessage = async (conversationId, messageContent) => {
 
         const data = await response.json();
         // I only want the last message of data.messages
-        addMessage(data.messages[data.messages.length - 1].content, false); // TODO make this function
+        addMessage(data.messages[data.messages.length - 1].content, false); 
     } catch (error) {
         console.error(error);
     }
-}
-
-// Helper function to get cookie ID
-const getCookieId = () => {
-    return "cookie3";
 }
 
 const loading = document.createElement("div");
