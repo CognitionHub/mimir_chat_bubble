@@ -1,5 +1,5 @@
 window.$mimirCompany = "Sprell"
-window.$mimirCustomerID = "cookie3"
+window.$mimirCustomerID = "cookie4"
 
 const mimirStyle = document.createElement('link')
 mimirStyle.rel = "stylesheet"

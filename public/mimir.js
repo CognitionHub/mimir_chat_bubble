@@ -11,14 +11,16 @@ chat.id = "mimirChat";
 
 const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:8000'
-    : 'https://your-azure-url-here.com';
+    : 'https://cognition-hub-backend.azurewebsites.net/docs#/default/get_conversation_content_conversations__conversation_id__get';
 
 const apiKey = "sdlfkgh-glsiygewoi--golsihgioweg"
 
+let conversationId;
+
 const initiateConversation = async () => {
     try {
-        const customerId = "cookie3";
-        // const customerId = window.$mimirCustomerID;
+        const customerId = window.$mimirCustomerID;
+
         const url = `${apiUrl}/conversations/?company_name=sprell&customer_id=${encodeURIComponent(customerId)}`;
         const response = await fetch(url, { 
             method: 'POST',
@@ -32,11 +34,18 @@ const initiateConversation = async () => {
         }
 
         const data = await response.json();
-        setInitialMessages(data.messages); // TODO make this function
+        setInitialMessages(data.messages);
         return data.id;
     } catch (error) {
         console.error(error);
     }
+}
+
+const setInitialMessages = (messages) => {
+    messages.forEach((message) => {
+        isUser = message.sender === "customer";
+        renderMessage(message.content, isUser);
+    });
 }
 
 const sendMessage = async (conversationId, messageContent) => {
@@ -56,7 +65,8 @@ const sendMessage = async (conversationId, messageContent) => {
 
         const data = await response.json();
         // I only want the last message of data.messages
-        addMessage(data.messages[data.messages.length - 1].content, false); 
+        const messageText = data.messages[data.messages.length - 1].content;
+        return messageText;
     } catch (error) {
         console.error(error);
     }
@@ -74,26 +84,37 @@ const toggleLoading = (showLoading) => {
     }
 }
 
-const addMessage = (text, isUser) => {
+const renderMessage = (text, isUser) => {
     if (text.length > 0) {
         const message = document.createElement("div");
         message.textContent = text;
-
-        if (isUser) {
-            message.id = "mimirUserMessage";
-            input.value = "";
-            input.focus();
-            sendMessage(6,text).then((response) => {
-                addMessage(response, false);
-            })
-        } else {
-            message.id = "mimirBotMessage";
-        }
-
+        message.id = isUser ? "mimirUserMessage" : "mimirBotMessage";
         messageContainer.appendChild(message);
         toggleLoading(isUser);
+        scrollToBottom(); // Auto-scroll to bottom
     }
 }
+
+const addMessage = (text, isUser) => {
+    if (text.length > 0) {
+        renderMessage(text, isUser);
+
+        if (isUser) {
+            text.id = "mimirUserMessage";
+            input.value = "";
+            input.focus();
+            sendMessage(conversationId,text).then((messageText) => {
+                addMessage(messageText, false);
+            })
+        } else {
+            text.id = "mimirBotMessage";
+        }
+    }
+}
+
+const scrollToBottom = () => {
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+};
 
 document.body.appendChild(bubble);
 document.body.appendChild(chat);
@@ -137,7 +158,7 @@ sendIcon.onclick = () => {
 }
 inputForm.appendChild(sendIcon);
 
-addMessage("Hei, høtt kan jeg hjelpe deg?", false);
+addMessage("Hei, hvordan kan jeg hjelpe deg?", false);
 
 bubble.onclick = () => {
     const chatShowing = chat.style.display === "flex";
@@ -160,10 +181,11 @@ document.addEventListener("click", function (event) {
     }
 });
 
-document.addEventListener("DOMContentLoaded", async () => {
-    const conversationId = await initiateConversation();
-    console.log(conversationId);
-});
+
+(async () => {
+    conversationId = await initiateConversation();
+})();
+
 
 // If running on localhost we want to show the chat by default
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
