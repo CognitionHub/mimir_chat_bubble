@@ -86,24 +86,6 @@ const setLoadingState = (loadingText) => {
     scrollToBottom();
 }
 
-let lastBotMessageElement = null;
-let appendToLastBotMessage = false;
-
-const renderMessage = (text, isUser) => {
-    console.log("renderMessage", text, isUser);
-    const message = document.createElement("div");
-    message.textContent = text;
-    message.id = isUser ? "mimirUserMessage" : "mimirBotMessage";
-    messageContainer.appendChild(message);
-    toggleLoading(isUser);
-
-    if (!isUser) {
-        lastBotMessageElement = message;
-    }
-
-    scrollToBottom(); // Auto-scroll to bottom
-}
-
 let currentMessage = null;
 const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
     if (isUser) {
