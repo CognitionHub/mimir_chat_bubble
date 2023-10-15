@@ -10,11 +10,6 @@ let lastChunkType = null;
 const initiateConversation = () => {
     // websocket expects customer_id, company_name, db
     ws = new WebSocket(API_URL + "/ws" + "?customer_id=" + window.$mimirCustomerID + "&company_name=" + window.$mimirCompany);
-
-    ws.addEventListener('open', () => {
-        // WebSocket is connected
-        // pass customer_id
-    });
         
     ws.addEventListener('message', (event) => {
         const parsedMessage = JSON.parse(event.data);
@@ -43,17 +38,6 @@ const initiateConversation = () => {
         lastChunkType = chunkType;
     });
 };
-
-
-const setInitialMessages = (data) => {
-    console.log("setInitialMessages", data);
-    data.messages.forEach((message) => {
-        isUser = message.sender === "customer";
-        // strip message.content of ""
-        messageCleaned = message.content.replace(/"/g, "");
-        renderMessage(messageCleaned, isUser);
-    });
-}
 
 const sendMessage = async (messageContent) => {
     if (ws && ws.readyState === WebSocket.OPEN) {
