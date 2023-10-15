@@ -148,7 +148,7 @@ header.id = "mimirHeader";
 chat.appendChild(header);
 
 const botIcon = document.createElement("i");
-botIcon.className = "fas fa-robot fa-2x";
+botIcon.className = "fas fa-smile fa-lg";
 header.appendChild(botIcon);
 
 const topText = document.createElement("div");
