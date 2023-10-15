@@ -15,62 +15,69 @@ const apiUrl = window.location.hostname === 'localhost' || window.location.hostn
 
 const apiKey = "sdlfkgh-glsiygewoi--golsihgioweg"
 
-let conversationId;
-
 const initiateConversation = async () => {
-    try {
-        const customerId = window.$mimirCustomerID;
-
-        const url = `${apiUrl}/conversations/?company_name=sprell&customer_id=${encodeURIComponent(customerId)}`;
-        const response = await fetch(url, { 
-            method: 'POST',
-            headers: {
-                "access_token": apiKey
-            }
-         });
-
-        if (!response.ok) {
-            throw new Error('Could not initiate conversation' + response.statusText);
-        }
-
-        const data = await response.json();
-        setInitialMessages(data.messages);
-        return data.id;
-    } catch (error) {
-        console.error(error);
-    }
+    // setInitialMessages(data.messages);
 }
 
-const setInitialMessages = (messages) => {
-    messages.forEach((message) => {
+const setInitialMessages = (data) => {
+    console.log("setInitialMessages", data);
+    data.messages.forEach((message) => {
         isUser = message.sender === "customer";
-        renderMessage(message.content, isUser);
+        // strip message.content of ""
+        messageCleaned = message.content.replace(/"/g, "");
+        renderMessage(messageCleaned, isUser);
     });
 }
 
-const sendMessage = async (conversationId, messageContent) => {
-    try {
-        const url = `${apiUrl}/conversations/${encodeURIComponent(conversationId)}/messages?message_content=${encodeURIComponent(messageContent)}`;
-        const response = await fetch(url, { 
-            method: 'POST',
-            headers: {
-                "access_token": apiKey
-            }
-        
-     });
-
-        if (!response.ok) {
-            throw new Error('Could not send message' + response.statusText);
-        }
-
-        const data = await response.json();
-        // I only want the last message of data.messages
-        const messageText = data.messages[data.messages.length - 1].content;
-        return messageText;
-    } catch (error) {
-        console.error(error);
+const sendMessage = async (messageContent) => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(
+            messageContent,
+            conversationId
+            ));
+    } else {
+        console.error("WebSocket is not open. readyState: ", ws.readyState);
     }
 }
+
+const scrollToBottom = () => {
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+};
+
+let ws;
+
+// company, customer id, api key, conversation id
+const connectWebSocket = () => {
+  let chunkedResponse = "";
+
+  const customerId = window.$mimirCustomerID;
+  const companyName = window.$mimirCompany;
+  ws = new WebSocket("ws://localhost:8000/ws?customer_id=" + customerId + "&company_name=" + companyName);
+
+  ws.addEventListener('open', () => {
+    // WebSocket is connected
+    // pass customer_id
+  });
+
+  ws.addEventListener('message', (event) => {
+    const parsedMessage = JSON.parse(event.data);
+    const chunkType = parsedMessage.type;
+    const chunkContent = parsedMessage.content || parsedMessage.message;
+
+    if (chunkType === "initial_messages") {
+        setInitialMessages(chunkContent);
+    }
+  
+    if (chunkType === "token" || chunkType === "full_message") {
+        addMessage(chunkContent, false, chunkType);
+    }
+  });
+
+  ws.addEventListener('close', () => {
+    console.log('Connection closed');
+  });
+};
+
 
 const loading = document.createElement("div");
 loading.id = "mimirLoading";
@@ -84,37 +91,54 @@ const toggleLoading = (showLoading) => {
     }
 }
 
+let lastBotMessageElement = null;
+let appendToLastBotMessage = false;
+
 const renderMessage = (text, isUser) => {
-    if (text.length > 0) {
-        const message = document.createElement("div");
-        message.textContent = text;
-        message.id = isUser ? "mimirUserMessage" : "mimirBotMessage";
-        messageContainer.appendChild(message);
-        toggleLoading(isUser);
-        scrollToBottom(); // Auto-scroll to bottom
+    console.log("renderMessage", text, isUser);
+    const message = document.createElement("div");
+    message.textContent = text;
+    message.id = isUser ? "mimirUserMessage" : "mimirBotMessage";
+    messageContainer.appendChild(message);
+    toggleLoading(isUser);
+
+    if (!isUser) {
+        lastBotMessageElement = message;
     }
+
+    scrollToBottom(); // Auto-scroll to bottom
 }
 
-const addMessage = (text, isUser) => {
-    if (text.length > 0) {
-        renderMessage(text, isUser);
+const addMessage = (text, isUser, chunkType) => {
 
-        if (isUser) {
-            text.id = "mimirUserMessage";
-            input.value = "";
-            input.focus();
-            sendMessage(conversationId,text).then((messageText) => {
-                addMessage(messageText, false);
-            })
+    if (isUser) {
+        text.id = "mimirUserMessage";
+        renderMessage(text, isUser);
+        input.value = "";
+        input.focus();
+        appendToLastBotMessage = false;
+        sendMessage(text);
+    } else {
+        text.id = "mimirBotMessage";
+        if (chunkType === "full_message") {
+            lastBotMessageElement.textContent = text;
         } else {
-            text.id = "mimirBotMessage";
+            if (appendToLastBotMessage && lastBotMessageElement) {
+                lastBotMessageElement.textContent += text;
+            } else {
+                renderMessage(text, isUser, chunkType);
+            }
+        }
+
+        if (chunkType === "token") {
+            appendToLastBotMessage = true;
+        } else if (chunkType === "full_message" || chunkType !== "token") {
+            appendToLastBotMessage = false;
         }
     }
 }
 
-const scrollToBottom = () => {
-    messageContainer.scrollTop = messageContainer.scrollHeight;
-};
+
 
 document.body.appendChild(bubble);
 document.body.appendChild(chat);
@@ -183,6 +207,7 @@ document.addEventListener("click", function (event) {
 
 
 (async () => {
+    connectWebSocket();
     conversationId = await initiateConversation();
 })();
 
