@@ -119,8 +119,7 @@ const inputForm = addMimirElement("form", {
     }
 }, chat)
 const input = addMimirElement("input", { "id": "mimirInput", "autocomplete": "off", "placeholder": "Still et spørsmål..." }, inputForm)
-const sendIcon = addMimirElement("i", { "className": "fas fa-paper-plane fa-lg", "id": "mimirSendIcon" }, inputForm)
-
+const sendIcon = addMimirElement("i", { "className": "fas fa-paper-plane fa-lg", "id": "mimirSendIcon", "onclick": () => addMessage(input.value, true) }, inputForm)
 // Header
 const header = addMimirElement("div", { "id": "mimirHeader" }, chat)
 const topText = addMimirElement("div", { "id": "mimirTopText", "textContent": `Chat` }, header)
