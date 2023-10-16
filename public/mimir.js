@@ -1,6 +1,6 @@
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'ws://localhost:8000'
-    : 'ws://cognition-hub-backend.azurewebsites.net';
+    : 'wss://cognition-hub-backend.azurewebsites.net';
 const API_KEY = "sdlfkgh-glsiygewoi--golsihgioweg"
 
 let ws;
