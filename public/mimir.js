@@ -1,97 +1,63 @@
-const bubble = document.createElement("div");
-bubble.id = "mimirBubble";
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'ws://localhost:8000'
+    : 'ws://cognition-hub-backend.azurewebsites.net/docs#/default/get_conversation_content_conversations__conversation_id__get';
+const API_KEY = "sdlfkgh-glsiygewoi--golsihgioweg"
 
-const chatIcon = document.createElement("i");
-chatIcon.className = "fas fa-comment fa-2x";
-chatIcon.id = "mimirChatIcon";
-bubble.appendChild(chatIcon);
+let ws;
 
-const chat = document.createElement("div");
-chat.id = "mimirChat";
+let lastChunkType = null;
+const initiateConversation = () => {
+    ws = new WebSocket(API_URL + "/chat" + "?customer_id=" + window.$mimirCustomerID + "&company_name=" + window.$mimirCompany + "&api_key=" + API_KEY);
+        
+    ws.addEventListener('message', (event) => {
+        const parsedMessage = JSON.parse(event.data);
+        const chunkType = parsedMessage.type;
+        const chunkContent = parsedMessage.content
 
-const callApi = async (text) => {
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    return "Halla, har ikke koblet opp mot API enda."
-}
-
-const loading = document.createElement("div");
-loading.id = "mimirLoading";
-loading.textContent = "Laster...";
-
-const toggleLoading = (showLoading) => {
-    if (showLoading) {
-        messageContainer.appendChild(loading);
-    } else if (messageContainer.contains(loading)) {
-        messageContainer.removeChild(loading);
-    }
-}
-
-const addMessage = (text, isUser) => {
-    if (text.length > 0) {
-        const message = document.createElement("div");
-        message.textContent = text;
-
-        if (isUser) {
-            message.id = "mimirUserMessage";
-            input.value = "";
-            input.focus();
-            callApi(text).then((response) => {
-                addMessage(response, false);
-            })
-        } else {
-            message.id = "mimirBotMessage";
+        if (chunkType === "initial_messages") {
+            chunkContent.messages.forEach(({ content, sender }) => {
+                const id = sender == "customer" ? "mimirUserMessage" : "mimirBotMessage";
+                addMimirElement("div", { "textContent": content, "id": id }, messageContainer);
+            });
+            scrollToBottom();
         }
 
-        messageContainer.appendChild(message);
-        toggleLoading(isUser);
+        if (chunkType === "tool") {
+            setLoadingState(chunkContent);
+        }
+
+        if (chunkType === "token" || chunkType === "full_message") {
+            const currentState = document.getElementById("mimirLoadingState");
+            if (currentState) {
+                currentState.remove();
+            }
+            addMessage(chunkContent, false, lastChunkType != "token", chunkType === "full_message");
+        }
+        lastChunkType = chunkType;
+    });
+};
+
+const sendMessage = async (messageContent) => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(messageContent);
+    } else {
+        console.error("WebSocket is not open. readyState: ", ws.readyState);
     }
 }
 
-document.body.appendChild(bubble);
-document.body.appendChild(chat);
-
-const header = document.createElement("div");
-header.id = "mimirHeader";
-chat.appendChild(header);
-
-const botIcon = document.createElement("i");
-botIcon.className = "fas fa-smile fa-lg";
-header.appendChild(botIcon);
-
-const topText = document.createElement("div");
-topText.textContent = `${$mimirCompany}-bot`;
-topText.id = "mimirTopText";
-header.appendChild(topText);
-
-const messageContainer = document.createElement("div");
-messageContainer.id = "mimirMessageContainer";
-chat.appendChild(messageContainer);
-
-const inputForm = document.createElement("form");
-inputForm.id = "mimirInputForm";
-inputForm.onsubmit = (e) => {
-    e.preventDefault();
-    addMessage(input.value, true);
+const addMimirElement = (elementName = "div", properties = {}, parent = document.body) => {
+    const e = document.createElement(elementName);
+    Object.assign(e, properties);
+    e.style.whiteSpace = "pre-line";
+    parent.appendChild(e);
+    return e
 }
-chat.appendChild(inputForm);
 
-const input = document.createElement("input");
-input.autocomplete = "off";
-input.id = "mimirInput";
-input.placeholder = "Still et spørmål...";
-inputForm.appendChild(input);
+const scrollToBottom = () => {
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+};
 
-const sendIcon = document.createElement("i");
-sendIcon.className = "fas fa-paper-plane fa-lg";
-sendIcon.id = "mimirSendIcon";
-sendIcon.onclick = () => {
-    addMessage(input.value, true);
-}
-inputForm.appendChild(sendIcon);
-
-addMessage("Hei, hva kan jeg hjelpe deg?", false);
-
-bubble.onclick = () => {
+const toggleChat = () => {
     const chatShowing = chat.style.display === "flex";
     if (chatShowing) {
         chat.style.display = "none";
@@ -104,15 +70,71 @@ bubble.onclick = () => {
         chatIcon.classList.add("fa-times");
         chatIcon.style.transform = "rotate(90deg)";
     }
-};
+}
 
-document.addEventListener("click", function (event) {
-    if (!chat.contains(event.target) && !bubble.contains(event.target)) {
-        chat.style.display = "none";
+const setLoadingState = (loadingText) => {
+    const currentState = document.getElementById("mimirLoadingState");
+    if (currentState) {
+        currentState.remove();
+    }
+
+    const loadingState = addMimirElement("div", { "id": "mimirLoadingState" }, messageContainer);
+    addMimirElement("div", { "id": "mimirSpinner" }, loadingState)
+    addMimirElement("div", { "id": "mimirLoadingText", "textContent": loadingText }, loadingState)
+    scrollToBottom();
+}
+
+let currentMessage = null;
+const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
+    if (isUser) {
+        sendMessage(text)
+        input.value = "";
+        input.focus();
+        addMimirElement("div", { "textContent": text, "id": "mimirUserMessage" }, messageContainer);
+        setLoadingState("Tenker");
+    } else {
+        if (isFirstToken) {
+            currentMessage = addMimirElement("div", { "id": "mimirBotMessage", "textContent": text }, messageContainer);
+        } else {
+            currentMessage.textContent = isFullMessage ? text : currentMessage.textContent + text;
+        }
+    }
+
+    scrollToBottom();
+}
+
+// Bubble
+const bubble = addMimirElement("div", { "id": "mimirBubble", "onclick": toggleChat }, document.body)
+const chatIcon = addMimirElement("i", { "className": "fas fa-comment fa-2x", "id": "mimirChatIcon" }, bubble)
+
+// Chat
+const chat = addMimirElement("div", { "id": "mimirChat" })
+const messageContainer = addMimirElement("div", { "id": "mimirMessageContainer" }, chat)
+
+// Input
+const inputForm = addMimirElement("form", {
+    "id": "mimirInputForm", "onsubmit": (e) => {
+        e.preventDefault();
+        addMessage(input.value, true);
+    }
+}, chat)
+const input = addMimirElement("input", { "id": "mimirInput", "autocomplete": "off", "placeholder": "Still et spørsmål..." }, inputForm)
+const sendIcon = addMimirElement("i", { "className": "fas fa-paper-plane fa-lg", "id": "mimirSendIcon", "onclick": () => addMessage(input.value, true) }, inputForm)
+// Header
+const header = addMimirElement("div", { "id": "mimirHeader" }, chat)
+const topText = addMimirElement("div", { "id": "mimirTopText", "textContent": `Chat` }, header)
+
+initiateConversation();
+addMessage("Hei, hvordan kan jeg hjelpe deg?", false, true, false);
+
+// Hide chat if clicked outside of chat
+document.addEventListener("click", (e) => {
+    if (!chat.contains(e.target) && !bubble.contains(e.target) && chat.style.display === "flex") {
+        toggleChat()
     }
 });
 
 // If running on localhost we want to show the chat by default
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    bubble.click();
+    toggleChat()
 }
