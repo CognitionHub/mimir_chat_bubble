@@ -1,6 +1,6 @@
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'ws://localhost:8000'
-    : 'ws://cognition-hub-backend.azurewebsites.net/docs#/default/get_conversation_content_conversations__conversation_id__get';
+    : 'ws://cognition-hub-backend.azurewebsites.net';
 const API_KEY = "sdlfkgh-glsiygewoi--golsihgioweg"
 
 let ws;
@@ -8,7 +8,7 @@ let ws;
 let lastChunkType = null;
 const initiateConversation = () => {
     ws = new WebSocket(API_URL + "/chat" + "?customer_id=" + window.$mimirCustomerID + "&company_name=" + window.$mimirCompany + "&api_key=" + API_KEY);
-        
+
     ws.addEventListener('message', (event) => {
         const parsedMessage = JSON.parse(event.data);
         const chunkType = parsedMessage.type;
