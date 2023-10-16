@@ -5,10 +5,8 @@ const API_KEY = "sdlfkgh-glsiygewoi--golsihgioweg"
 
 let ws;
 
-// company, customer id, api key, conversation id
 let lastChunkType = null;
 const initiateConversation = () => {
-    // websocket expects customer_id, company_name, db
     ws = new WebSocket(API_URL + "/chat" + "?customer_id=" + window.$mimirCustomerID + "&company_name=" + window.$mimirCompany + "&api_key=" + API_KEY);
         
     ws.addEventListener('message', (event) => {
