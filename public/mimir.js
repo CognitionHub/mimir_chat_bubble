@@ -138,3 +138,12 @@ document.addEventListener("click", (e) => {
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     toggleChat()
 }
+
+
+window.addEventListener("scroll", () => {
+    if (window.scrollY > 400) {
+        bubble.style.display = "none";
+    } else {
+        bubble.style.display = "flex";
+    }
+});
