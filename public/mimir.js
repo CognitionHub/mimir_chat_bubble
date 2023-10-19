@@ -85,18 +85,30 @@ const setLoadingState = (loadingText) => {
 }
 
 let currentMessage = null;
+let isCurrentlyAnswering = false;
 const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
     if (isUser) {
+        // Don't send empty messages and disallow two questions at the same time
+        if (text.trim() === '' || isCurrentlyAnswering) {
+            return;
+        }
         sendMessage(text)
         input.value = "";
         input.focus();
         addMimirElement("div", { "textContent": text, "id": "mimirUserMessage" }, messageContainer);
         setLoadingState("Tenker");
+        isCurrentlyAnswering = true;
+        sendIcon.style.opacity = "0.3";
     } else {
         if (isFirstToken) {
             currentMessage = addMimirElement("div", { "id": "mimirBotMessage", "textContent": text }, messageContainer);
         } else {
             currentMessage.textContent = isFullMessage ? text : currentMessage.textContent + text;
+        }
+
+        if (isFullMessage) {
+            sendIcon.style.opacity = "1";
+            isCurrentlyAnswering = false;
         }
     }
 
