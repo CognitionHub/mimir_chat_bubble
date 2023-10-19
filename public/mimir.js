@@ -37,14 +37,6 @@ const initiateConversation = () => {
     });
 };
 
-const sendMessage = async (messageContent) => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(messageContent);
-    } else {
-        console.error("WebSocket is not open. readyState: ", ws.readyState);
-    }
-}
-
 const addMimirElement = (elementName = "div", properties = {}, parent = document.body) => {
     const e = document.createElement(elementName);
     Object.assign(e, properties);
@@ -85,18 +77,39 @@ const setLoadingState = (loadingText) => {
 }
 
 let currentMessage = null;
+let isCurrentlyAnswering = false;
 const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
     if (isUser) {
-        sendMessage(text)
+        // Don't send empty messages and disallow two questions at the same time
+        if (text.trim() === '' || isCurrentlyAnswering) {
+            return;
+        }
+
         input.value = "";
         input.focus();
         addMimirElement("div", { "textContent": text, "id": "mimirUserMessage" }, messageContainer);
+
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(messageContent);
+        } else {
+            addMessage("Noe gikk galt, beklager for ulempen.", false, true, true)
+            console.error("WebSocket is not open. readyState: ", ws.readyState);
+            return;
+        }
+
         setLoadingState("Tenker");
+        isCurrentlyAnswering = true;
+        sendIcon.style.opacity = "0.3";
     } else {
         if (isFirstToken) {
             currentMessage = addMimirElement("div", { "id": "mimirBotMessage", "textContent": text }, messageContainer);
         } else {
             currentMessage.textContent = isFullMessage ? text : currentMessage.textContent + text;
+        }
+
+        if (isFullMessage) {
+            sendIcon.style.opacity = "1";
+            isCurrentlyAnswering = false;
         }
     }
 
