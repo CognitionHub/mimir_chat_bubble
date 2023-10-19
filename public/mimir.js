@@ -37,19 +37,6 @@ const initiateConversation = () => {
     });
 };
 
-const sendMessage = async (messageContent) => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(messageContent);
-    } else {
-        addMessage("Noe gikk galt, beklager for ulempen.", false, true, true)
-        const currentState = document.getElementById("mimirLoadingState");
-        if (currentState) {
-            currentState.remove();
-        }
-        console.error("WebSocket is not open. readyState: ", ws.readyState);
-    }
-}
-
 const addMimirElement = (elementName = "div", properties = {}, parent = document.body) => {
     const e = document.createElement(elementName);
     Object.assign(e, properties);
