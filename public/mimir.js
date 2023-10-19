@@ -41,6 +41,11 @@ const sendMessage = async (messageContent) => {
     if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(messageContent);
     } else {
+        addMessage("Noe gikk galt, beklager for ulempen.", false, true, true)
+        const currentState = document.getElementById("mimirLoadingState");
+        if (currentState) {
+            currentState.remove();
+        }
         console.error("WebSocket is not open. readyState: ", ws.readyState);
     }
 }
@@ -92,10 +97,19 @@ const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
         if (text.trim() === '' || isCurrentlyAnswering) {
             return;
         }
-        sendMessage(text)
+
         input.value = "";
         input.focus();
         addMimirElement("div", { "textContent": text, "id": "mimirUserMessage" }, messageContainer);
+
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(messageContent);
+        } else {
+            addMessage("Noe gikk galt, beklager for ulempen.", false, true, true)
+            console.error("WebSocket is not open. readyState: ", ws.readyState);
+            return;
+        }
+
         setLoadingState("Tenker");
         isCurrentlyAnswering = true;
         sendIcon.style.opacity = "0.3";
