@@ -90,7 +90,7 @@ const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
         addMimirElement("div", { "textContent": text, "id": "mimirUserMessage" }, messageContainer);
 
         if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(messageContent);
+            ws.send(text);
         } else {
             addMessage("Noe gikk galt, beklager for ulempen.", false, true, true)
             console.error("WebSocket is not open. readyState: ", ws.readyState);
