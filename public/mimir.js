@@ -116,6 +116,13 @@ const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
     scrollToBottom();
 }
 
+// Icon stylesheet
+addMimirElement("link", {
+    rel: "stylesheet",
+    href: "https://use.fontawesome.com/releases/v5.7.1/css/all.css",
+    type: "text/css"
+}, document.head);
+
 // Bubble
 const bubble = addMimirElement("div", { "id": "mimirBubble", "onclick": toggleChat }, document.body)
 const chatIcon = addMimirElement("i", { "className": "fas fa-comment fa-2x", "id": "mimirChatIcon" }, bubble)
