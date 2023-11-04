@@ -2,12 +2,41 @@ const API_URL = window.location.hostname === 'localhost' || window.location.host
     ? 'ws://localhost:8000'
     : 'wss://cognition-hub-backend.azurewebsites.net';
 const API_KEY = "sdlfkgh-glsiygewoi--golsihgioweg"
+const OPENER_MESSAGE = "Hei, hvordan kan jeg hjelpe deg?"
+
+const toggleTryingToConnect = (show) => {
+    const isShowing = document.getElementById("mimirLoadingState");
+    if (isShowing && !show) {
+        isShowing.remove();
+    }
+
+    if (!isShowing && show) {
+        const loadingState = addMimirElement("div", { "id": "mimirLoadingState" }, messageContainer);
+        addMimirElement("div", { "id": "mimirSpinner" }, loadingState)
+        addMimirElement("div", { "id": "mimirLoadingText", "textContent": "Opretter tilkobling..." }, loadingState)
+        scrollToBottom();
+    }
+}
 
 let ws;
 
 let lastChunkType = null;
+let showingTryingToConnect = false;
 const initiateConversation = () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        return;
+    }
+
     ws = new WebSocket(API_URL + "/chat" + "?customer_id=" + window.$mimirCustomerID + "&company_name=" + window.$mimirCompany + "&api_key=" + API_KEY);
+
+    ws.addEventListener('open', () => {
+        const openerMessage = document.getElementById("mimirOpenerMessage");
+        if (!openerMessage) {
+            addMimirElement("div", { "textContent": OPENER_MESSAGE, "id": "mimirOpenerMessage" }, messageContainer);
+        }
+
+        toggleTryingToConnect(false);
+    });
 
     ws.addEventListener('message', (event) => {
         const parsedMessage = JSON.parse(event.data);
@@ -15,9 +44,12 @@ const initiateConversation = () => {
         const chunkContent = parsedMessage.content
 
         if (chunkType === "initial_messages") {
+            document.querySelectorAll('.mimirUserMessage').forEach(el => el.remove());
+            document.querySelectorAll('.mimirBotMessage').forEach(el => el.remove());
+
             chunkContent.messages.forEach(({ content, sender }) => {
                 const id = sender == "customer" ? "mimirUserMessage" : "mimirBotMessage";
-                addMimirElement("div", { "textContent": content, "id": id }, messageContainer);
+                addMimirElement("div", { "textContent": content, "className": id }, messageContainer);
             });
             scrollToBottom();
         }
@@ -34,6 +66,11 @@ const initiateConversation = () => {
             addMessage(chunkContent, false, lastChunkType != "token", chunkType === "full_message");
         }
         lastChunkType = chunkType;
+    });
+
+    ws.addEventListener('close', () => {
+        showingTryingToConnect = true;
+        toggleTryingToConnect(true);
     });
 };
 
@@ -80,19 +117,18 @@ let currentMessage = null;
 let isCurrentlyAnswering = false;
 const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
     if (isUser) {
-        // Don't send empty messages and disallow two questions at the same time
-        if (text.trim() === '' || isCurrentlyAnswering) {
+        if (text.trim() === '' || isCurrentlyAnswering || !ws || ws.readyState !== WebSocket.OPEN) {
             return;
         }
 
         input.value = "";
         input.focus();
-        addMimirElement("div", { "textContent": text, "id": "mimirUserMessage" }, messageContainer);
 
         if (ws && ws.readyState === WebSocket.OPEN) {
+            addMimirElement("div", { "textContent": text, "className": "mimirUserMessage" }, messageContainer);
             ws.send(text);
         } else {
-            addMessage("Noe gikk galt, beklager for ulempen.", false, true, true)
+            initiateConversation()
             console.error("WebSocket is not open. readyState: ", ws.readyState);
             return;
         }
@@ -102,7 +138,7 @@ const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
         sendIcon.style.opacity = "0.3";
     } else {
         if (isFirstToken) {
-            currentMessage = addMimirElement("div", { "id": "mimirBotMessage", "textContent": text }, messageContainer);
+            currentMessage = addMimirElement("div", { "className": "mimirBotMessage", "textContent": text }, messageContainer);
         } else {
             currentMessage.textContent = isFullMessage ? text : currentMessage.textContent + text;
         }
@@ -140,12 +176,14 @@ const inputForm = addMimirElement("form", {
 }, chat)
 const input = addMimirElement("input", { "id": "mimirInput", "autocomplete": "off", "placeholder": "Still et spørsmål..." }, inputForm)
 const sendIcon = addMimirElement("i", { "className": "fas fa-paper-plane fa-lg", "id": "mimirSendIcon", "onclick": () => addMessage(input.value, true) }, inputForm)
+
 // Header
 const header = addMimirElement("div", { "id": "mimirHeader" }, chat)
 const topText = addMimirElement("div", { "id": "mimirTopText", "textContent": `Chat` }, header)
 
+toggleTryingToConnect(true)
 initiateConversation();
-addMessage("Hei, hvordan kan jeg hjelpe deg?", false, true, false);
+setInterval(initiateConversation, 10000);
 
 // Hide chat if clicked outside of chat
 document.addEventListener("click", (e) => {
