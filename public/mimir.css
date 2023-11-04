@@ -123,7 +123,8 @@
     align-items: center;
 }
 
-#mimirUserMessage {
+#mimirUserMessage,
+.mimirUserMessage {
     margin-left: auto;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 14px;
@@ -136,13 +137,9 @@
     justify-content: end;
 }
 
-#mimirBotContainer {
-    display: flex;
-    align-self: start;
-    gap: 16px;
-}
-
-#mimirBotMessage {
+#mimirBotMessage,
+#mimirOpenerMessage,
+.mimirBotMessage {
     margin-right: auto;
     font-size: 14px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
