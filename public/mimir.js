@@ -23,7 +23,7 @@ let ws;
 let lastChunkType = null;
 let showingTryingToConnect = false;
 const initiateConversation = () => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
+    if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
         return;
     }
 
