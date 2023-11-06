@@ -173,7 +173,11 @@ const inputForm = addMimirElement("form", {
         addMessage(input.value, true);
     }
 }, chat)
-const input = addMimirElement("input", { "id": "mimirInput", "autocomplete": "off", "placeholder": "Still et spørsmål..." }, inputForm)
+const input = addMimirElement("textarea", { "id": "mimirInput", "rows": 1, "autocomplete": "off", "placeholder": "Still et spørsmål..." }, inputForm)
+input.addEventListener("input", () => {
+    input.style.height = 'auto';
+    input.style.height = input.scrollHeight + 'px';
+})
 const sendIcon = addMimirElement("i", { "className": "fas fa-paper-plane fa-lg", "id": "mimirSendIcon", "onclick": () => addMessage(input.value, true) }, inputForm)
 
 // Header

@@ -77,26 +77,13 @@
 #mimirInput {
     width: 100%;
     border: none;
+    height: 25px;
     font-size: 16px;
+    resize: none;
+    overflow: hidden;
     font-family: "Helvetica Neue",
         Arial,
         sans-serif;
-}
-
-#mimirInput::-webkit-input-placeholder {
-    opacity: 0.6;
-}
-
-#mimirInput::-moz-placeholder {
-    opacity: 0.6;
-}
-
-#mimirInput::-ms-input-placeholder {
-    opacity: 0.6;
-}
-
-#mimirInput::placeholder {
-    opacity: 0.6;
 }
 
 #mimirInput:focus {
@@ -117,7 +104,7 @@
 #mimirInputForm {
     border-top: 1.5px solid rgba(0, 0, 0, 0.05);
     background-color: white;
-    padding: 24px 24px;
+    padding: 16px 24px;
     display: flex;
     justify-content: center;
     align-items: center;
