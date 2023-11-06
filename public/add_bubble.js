@@ -1,4 +1,4 @@
-window.$mimirCompany = "glassoginteriør"
+window.$mimirCompany = "skopus"
 window.$mimirCustomerID = "cookieB"
 
 const mimirStyle = document.createElement('link')
