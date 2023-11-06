@@ -1,5 +1,5 @@
 :root {
-    --mimir-primary-color: #ffffff;
+    --mimir-primary-color: #336DDE;
     --mimir-right-position: 150px;
     --mimir-bottom-position: 150px;
 }
@@ -32,17 +32,11 @@
     z-index: 9999;
     padding-top: 70px;
     box-sizing: border-box;
-}
-
-@media(min-width: 991px) {
-    #mimirChat {
-        bottom: var(--mimir-bottom-position);
-        right: var(--mimir-right-position);
-        border-radius: 16px;
-        position: fixed;
-        width: 400px;
-        height: 600px;
-    }
+    bottom: var(--mimir-bottom-position);
+    right: var(--mimir-right-position);
+    border-radius: 16px;
+    width: 400px;
+    height: 600px;
 }
 
 
