@@ -1,14 +1,16 @@
 :root {
     --mimir-primary-color: rgb(243, 10, 27);
+    --mimir-right-position: 30px;
+    --mimir-bottom-position: 30px;
 }
 
 #mimirBubble {
     position: fixed;
-    bottom: 50px;
-    right: 50px;
+    bottom: var(--mimir-bottom-position);
+    right: var(--mimir-right-position);
     height: 64px;
-    opacity: 1;
     width: 64px;
+    opacity: 1;
     background: var(--mimir-primary-color);
     color: white;
     border-radius: 50%;
@@ -20,28 +22,46 @@
 }
 
 #mimirChat {
-    width: min(400px, 80vw);
-    height: min(600px, 70vh);
     overflow: hidden;
-    border-radius: 16px;
     background-color: white;
     position: fixed;
-    bottom: 130px;
-    right: 30px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
     display: none;
     flex-direction: column;
     justify-content: space-between;
     z-index: 9999;
     padding-top: 70px;
+    box-sizing: border-box;
+}
+
+@media(min-width: 991px) {
+    #mimirChat {
+        bottom: var(--mimir-bottom-position);
+        right: var(--mimir-right-position);
+        border-radius: 16px;
+        position: fixed;
+        width: 400px;
+        height: 600px;
+    }
+}
+
+
+@media(max-width: 991px) {
+    #mimirChat {
+        bottom: 0;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+    }
 }
 
 #mimirHeader {
     background: var(--mimir-primary-color);
     display: flex;
     align-items: center;
-    justify-content: left;
-    padding-left: 30px;
+    justify-content: space-between;
+    padding: 0 30px;
     color: white;
     position: absolute;
     top: 0;
@@ -60,6 +80,11 @@
     font-weight: bold;
 }
 
+#mimirCloseIcon:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
 #mimirMessageContainer {
     display: flex;
     flex-direction: column;
@@ -68,10 +93,6 @@
     width: 100%;
     overflow-y: auto;
     padding: 16px;
-}
-
-#mimirChatIcon {
-    transition: transform 0.3s ease;
 }
 
 #mimirInput {

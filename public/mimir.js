@@ -74,6 +74,7 @@ const initiateConversation = () => {
     });
 };
 
+
 const addMimirElement = (elementName = "div", properties = {}, parent = document.body) => {
     const e = document.createElement(elementName);
     Object.assign(e, properties);
@@ -90,14 +91,8 @@ const toggleChat = () => {
     const chatShowing = chat.style.display === "flex";
     if (chatShowing) {
         chat.style.display = "none";
-        chatIcon.style.transform = "";
-        chatIcon.classList.remove("fa-times");
-        chatIcon.classList.add("fa-comment");
     } else {
         chat.style.display = "flex";
-        chatIcon.classList.remove("fa-comment");
-        chatIcon.classList.add("fa-times");
-        chatIcon.style.transform = "rotate(90deg)";
     }
 }
 
@@ -183,6 +178,7 @@ const sendIcon = addMimirElement("i", { "className": "fas fa-paper-plane fa-lg",
 // Header
 const header = addMimirElement("div", { "id": "mimirHeader" }, chat)
 const topText = addMimirElement("div", { "id": "mimirTopText", "textContent": `Chat` }, header)
+const closeIcon = addMimirElement("i", { "className": "fas fa-times fa-lg", "id": "mimirChatIcon", "id": "mimirCloseIcon", "onclick": toggleChat }, header)
 
 toggleTryingToConnect(true)
 initiateConversation();
@@ -199,12 +195,3 @@ document.addEventListener("click", (e) => {
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     toggleChat()
 }
-
-
-window.addEventListener("scroll", () => {
-    if (window.scrollY > 400) {
-        bubble.style.display = "none";
-    } else {
-        bubble.style.display = "flex";
-    }
-});
