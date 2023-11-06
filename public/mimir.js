@@ -23,8 +23,12 @@ let ws;
 let lastChunkType = null;
 let showingTryingToConnect = false;
 const initiateConversation = () => {
-    if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+    if (ws && ws.readyState !== WebSocket.CLOSED) {
         return;
+    }
+
+    if (ws) {
+        ws.close()
     }
 
     ws = new WebSocket(API_URL + "/chat" + "?customer_id=" + window.$mimirCustomerID + "&company_name=" + window.$mimirCompany + "&api_key=" + API_KEY);
