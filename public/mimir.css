@@ -1,11 +1,11 @@
 :root {
     --mimir-primary-color: #336DDE;
-    --mimir-right-position: 150px;
-    --mimir-bottom-position: 150px;
+    --mimir-right-position: 30px;
+    --mimir-bottom-position: 30px;
 }
 
 #mimirBubble {
-    position: fixed;
+    position: absolute;
     bottom: var(--mimir-bottom-position);
     right: var(--mimir-right-position);
     height: 64px;
@@ -25,7 +25,7 @@
     overflow: hidden;
     background-color: white;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    position: fixed;
+    position: absolute;
     display: none;
     flex-direction: column;
     justify-content: space-between;
