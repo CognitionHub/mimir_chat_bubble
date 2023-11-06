@@ -13,7 +13,7 @@ const toggleTryingToConnect = (show) => {
     if (!isShowing && show) {
         const loadingState = addMimirElement("div", { "id": "mimirLoadingState" }, messageContainer);
         addMimirElement("div", { "id": "mimirSpinner" }, loadingState)
-        addMimirElement("div", { "id": "mimirLoadingText", "textContent": "Opretter tilkobling..." }, loadingState)
+        addMimirElement("div", { "id": "mimirLoadingText", "textContent": "Oppretter tilkobling..." }, loadingState)
         scrollToBottom();
     }
 }
@@ -112,7 +112,6 @@ const setLoadingState = (loadingText) => {
     addMimirElement("div", { "id": "mimirLoadingText", "textContent": loadingText }, loadingState)
     scrollToBottom();
 }
-
 let currentMessage = null;
 let isCurrentlyAnswering = false;
 const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
