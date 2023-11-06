@@ -13,7 +13,7 @@ const toggleTryingToConnect = (show) => {
     if (!isShowing && show) {
         const loadingState = addMimirElement("div", { "id": "mimirLoadingState" }, messageContainer);
         addMimirElement("div", { "id": "mimirSpinner" }, loadingState)
-        addMimirElement("div", { "id": "mimirLoadingText", "textContent": "Opretter tilkobling..." }, loadingState)
+        addMimirElement("div", { "id": "mimirLoadingText", "textContent": "Oppretter tilkobling..." }, loadingState)
         scrollToBottom();
     }
 }
@@ -74,6 +74,7 @@ const initiateConversation = () => {
     });
 };
 
+
 const addMimirElement = (elementName = "div", properties = {}, parent = document.body) => {
     const e = document.createElement(elementName);
     Object.assign(e, properties);
@@ -90,14 +91,8 @@ const toggleChat = () => {
     const chatShowing = chat.style.display === "flex";
     if (chatShowing) {
         chat.style.display = "none";
-        chatIcon.style.transform = "";
-        chatIcon.classList.remove("fa-times");
-        chatIcon.classList.add("fa-comment");
     } else {
         chat.style.display = "flex";
-        chatIcon.classList.remove("fa-comment");
-        chatIcon.classList.add("fa-times");
-        chatIcon.style.transform = "rotate(90deg)";
     }
 }
 
@@ -112,7 +107,6 @@ const setLoadingState = (loadingText) => {
     addMimirElement("div", { "id": "mimirLoadingText", "textContent": loadingText }, loadingState)
     scrollToBottom();
 }
-
 let currentMessage = null;
 let isCurrentlyAnswering = false;
 const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
@@ -174,12 +168,17 @@ const inputForm = addMimirElement("form", {
         addMessage(input.value, true);
     }
 }, chat)
-const input = addMimirElement("input", { "id": "mimirInput", "autocomplete": "off", "placeholder": "Still et spørsmål..." }, inputForm)
+const input = addMimirElement("textarea", { "id": "mimirInput", "rows": 1, "autocomplete": "off", "placeholder": "Still et spørsmål..." }, inputForm)
+input.addEventListener("input", () => {
+    input.style.height = 'auto';
+    input.style.height = input.scrollHeight + 'px';
+})
 const sendIcon = addMimirElement("i", { "className": "fas fa-paper-plane fa-lg", "id": "mimirSendIcon", "onclick": () => addMessage(input.value, true) }, inputForm)
 
 // Header
 const header = addMimirElement("div", { "id": "mimirHeader" }, chat)
 const topText = addMimirElement("div", { "id": "mimirTopText", "textContent": `Chat` }, header)
+const closeIcon = addMimirElement("i", { "className": "fas fa-times fa-lg", "id": "mimirChatIcon", "id": "mimirCloseIcon", "onclick": toggleChat }, header)
 
 toggleTryingToConnect(true)
 initiateConversation();
@@ -196,12 +195,3 @@ document.addEventListener("click", (e) => {
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     toggleChat()
 }
-
-
-window.addEventListener("scroll", () => {
-    if (window.scrollY > 400) {
-        bubble.style.display = "none";
-    } else {
-        bubble.style.display = "flex";
-    }
-});
