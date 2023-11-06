@@ -173,6 +173,12 @@ input.addEventListener("input", () => {
     input.style.height = 'auto';
     input.style.height = input.scrollHeight + 'px';
 })
+input.addEventListener("keypress", (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        addMessage(input.value, true);
+    }
+})
 const sendIcon = addMimirElement("i", { "className": "fas fa-paper-plane fa-lg", "id": "mimirSendIcon", "onclick": () => addMessage(input.value, true) }, inputForm)
 
 // Header
