@@ -39,8 +39,8 @@
     bottom: var(--mimir-bottom-position);
     right: var(--mimir-right-position);
     border-radius: 16px;
-    width: 20vw;
-    height: 60vh;
+    width: 20rem;
+    height: 32rem;
 }
 
 #mimirHeader {
