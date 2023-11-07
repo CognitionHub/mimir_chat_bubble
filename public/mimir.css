@@ -4,6 +4,10 @@
     --mimir-bottom-position: 500px;
 }
 
+#embed01 {
+    position:absolute
+}
+
 #mimirBubble {
     position: absolute;
     bottom: var(--mimir-bottom-position);
