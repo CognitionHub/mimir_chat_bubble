@@ -31,7 +31,7 @@ const initiateConversation = () => {
         ws.close()
     }
 
-    ws = new WebSocket(API_URL + "/chat" + "?customer_id=" + window.$mimirCustomerID + "&company_name=" + window.$mimirCompany + "&api_key=" + API_KEY);
+    ws = new WebSocket(API_URL + "/chat" + "?customer_id=" + crypto.randomUUID() + "&company_name=" + "skopus" + "&api_key=" + API_KEY);
 
     ws.addEventListener('open', () => {
         const openerMessage = document.getElementById("mimirOpenerMessage");
