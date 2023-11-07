@@ -168,7 +168,8 @@
     border-radius: 50%;
 }
 
-#mimirLoadingState {
+#mimirLoadingState,
+#mimirFailedState {
     padding: 16px;
     padding-right: 32px;
     align-self: start;
@@ -183,6 +184,11 @@
     font-family: "Helvetica Neue",
         Arial,
         sans-serif;
+}
+
+#mimirFailedState:hover {
+    transform: scale(1.01);
+    cursor: pointer;
 }
 
 #mimirLoadingText {
