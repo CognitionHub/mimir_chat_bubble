@@ -201,7 +201,5 @@ setInterval(initiateConversation, 10000);
 //     }
 // });
 
-// If running on localhost we want to show the chat by default
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    toggleChat()
-}
+// we want to show the chat by default on this branch
+toggleChat()

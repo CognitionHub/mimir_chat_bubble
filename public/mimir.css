@@ -39,16 +39,6 @@
     height: 600px;
 }
 
-
-@media(max-width: 991px) {
-    #mimirChat {
-        right: 0;
-        left: 0;
-        top: 0;
-        bottom: 0;
-    }
-}
-
 #mimirHeader {
     background: var(--mimir-primary-color);
     display: flex;
