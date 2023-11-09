@@ -1,7 +1,7 @@
 :root {
     --mimir-primary-color: #336DDE;
-    --mimir-right-position: 25%;
-    --mimir-bottom-position: 27%;
+    --mimir-right-position: 10%;
+    --mimir-bottom-position: 10%;
 }
 
 #embed01 {
@@ -9,7 +9,7 @@
 }
 
 #mimirBubble {
-    position: absolute;
+    position: relative;
     bottom: var(--mimir-bottom-position);
     right: var(--mimir-right-position);
     height: 64px;
@@ -29,7 +29,7 @@
     overflow: hidden;
     background-color: white;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    position: absolute;
+    position: relative;
     display: none;
     flex-direction: column;
     justify-content: space-between;
