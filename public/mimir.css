@@ -4,6 +4,26 @@
     --mimir-bottom-position: 27%;
 }
 
+@media (min-width: 1920px) {
+    :root {
+        --mimir-bottom-position: 30%; /* Increased from a flat pixel value to a percentage to move it up */
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1919px) {
+    :root {
+        --mimir-bottom-position: 20%; /* A percentage to give it more room from the top */
+    }
+}
+
+@media (max-width: 1279px) {
+    :root {
+        --mimir-right-position: 20%; /* Less space on the sides for smaller screens */
+        --mimir-bottom-position: 15%;  /* More space from the top */
+    }
+}
+
+
 #mimirBubble {
     position: absolute;
     bottom: var(--mimir-bottom-position);
