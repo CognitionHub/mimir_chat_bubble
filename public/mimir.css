@@ -34,7 +34,7 @@
     flex-direction: column;
     justify-content: space-between;
     z-index: 9999;
-    padding-top: 70px;
+    /* padding-top: 70px; */
     box-sizing: border-box;
     bottom: var(--mimir-bottom-position);
     right: var(--mimir-right-position);
