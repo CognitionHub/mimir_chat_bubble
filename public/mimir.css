@@ -1,7 +1,7 @@
 :root {
     --mimir-primary-color: #336DDE;
-    /* --mimir-right-position: 10%;
-    --mimir-bottom-position: 10%; */
+    --mimir-right-position: 25%;
+    --mimir-bottom-position: 27%;
 }
 
 #embed01 {
@@ -34,7 +34,7 @@
     flex-direction: column;
     justify-content: space-between;
     z-index: 9999;
-    /* padding-top: 70px; */
+    padding-top: 70px;
     box-sizing: border-box;
     bottom: var(--mimir-bottom-position);
     right: var(--mimir-right-position);
