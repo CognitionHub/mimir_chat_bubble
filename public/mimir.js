@@ -194,12 +194,15 @@ toggleTryingToConnect(true)
 initiateConversation();
 setInterval(initiateConversation, 10000);
 
-// Hide chat if clicked outside of chat
-// document.addEventListener("click", (e) => {
-//     if (!chat.contains(e.target) && !bubble.contains(e.target) && chat.style.display === "flex") {
-//         toggleChat()
-//     }
-// });
 
-// we want to show the chat by default on this branch
-toggleChat()
+// Hide chat if clicked outside of chat
+document.addEventListener("click", (e) => {
+    if (!chat.contains(e.target) && !bubble.contains(e.target) && chat.style.display === "flex") {
+        toggleChat()
+    }
+});
+
+// If running on localhost we want to show the chat by default
+// if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+//     toggleChat()
+// }

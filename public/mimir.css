@@ -1,32 +1,11 @@
 :root {
     --mimir-primary-color: #336DDE;
-    --mimir-right-position: 25%;
-    --mimir-bottom-position: 27%;
+    --mimir-right-position: 30px;
+    --mimir-bottom-position: 30px;
 }
-
-@media (min-width: 1920px) {
-    :root {
-        --mimir-bottom-position: 35%; /* Increased from a flat pixel value to a percentage to move it up */
-    }
-}
-
-@media (min-width: 1280px) and (max-width: 1919px) {
-    :root {
-        --mimir-right-position: 20%;
-        --mimir-bottom-position: 18%; /* A percentage to give it more room from the top */
-    }
-}
-
-@media (max-width: 1279px) {
-    :root {
-        --mimir-right-position: 20%; /* Less space on the sides for smaller screens */
-        --mimir-bottom-position: 15%;  /* More space from the top */
-    }
-}
-
 
 #mimirBubble {
-    position: absolute;
+    position: fixed;
     bottom: var(--mimir-bottom-position);
     right: var(--mimir-right-position);
     height: 64px;
@@ -46,7 +25,7 @@
     overflow: hidden;
     background-color: white;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    position: absolute;
+    position: fixed;
     display: none;
     flex-direction: column;
     justify-content: space-between;
@@ -189,8 +168,7 @@
     border-radius: 50%;
 }
 
-#mimirLoadingState,
-#mimirFailedState {
+#mimirLoadingState {
     padding: 16px;
     padding-right: 32px;
     align-self: start;
@@ -205,11 +183,6 @@
     font-family: "Helvetica Neue",
         Arial,
         sans-serif;
-}
-
-#mimirFailedState:hover {
-    transform: scale(1.01);
-    cursor: pointer;
 }
 
 #mimirLoadingText {
