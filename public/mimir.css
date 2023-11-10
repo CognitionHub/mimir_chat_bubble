@@ -6,13 +6,14 @@
 
 @media (min-width: 1920px) {
     :root {
-        --mimir-bottom-position: 30%; /* Increased from a flat pixel value to a percentage to move it up */
+        --mimir-bottom-position: 35%; /* Increased from a flat pixel value to a percentage to move it up */
     }
 }
 
 @media (min-width: 1280px) and (max-width: 1919px) {
     :root {
-        --mimir-bottom-position: 20%; /* A percentage to give it more room from the top */
+        --mimir-right-position: 20%;
+        --mimir-bottom-position: 18%; /* A percentage to give it more room from the top */
     }
 }
 
