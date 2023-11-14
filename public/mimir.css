@@ -97,9 +97,10 @@
 #mimirInput {
     width: 100%;
     border: none;
-    height: 25px;
+    height: 25px !important;
     font-size: 16px;
     resize: none;
+    background-color: white;
     overflow: hidden;
     font-family: "Helvetica Neue",
         Arial,
