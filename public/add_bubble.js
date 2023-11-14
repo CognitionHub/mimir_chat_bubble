@@ -1,5 +1,5 @@
 window.$mimirCompany = "bikeshop"
-window.$mimirCustomerID = "cookie1"
+window.$mimirCustomerID = crypto.randomUUID()
 
 const mimirStyle = document.createElement('link')
 mimirStyle.rel = "stylesheet"
