@@ -203,6 +203,6 @@ document.addEventListener("click", (e) => {
 });
 
 // If running on localhost we want to show the chat by default
-// if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-//     toggleChat()
-// }
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    toggleChat()
+}
