@@ -37,8 +37,6 @@ const initiateConversation = () => {
         const openerMessage = document.getElementById("mimirOpenerMessage");
         if (!openerMessage) {
             addMimirElement("div", { "textContent": OPENER_MESSAGE, "id": "mimirOpenerMessage" }, messageContainer);
-            addMimirElement("div", { "textContent": "Siden dette er en fiktiv nettbutikk, har jeg dessverre ikke en like imponerende produkt-katalog som det dere sikkert har. Akkurat nå har jeg bare informasjon om 7 typer sko. Om du vil vite hvilke, er det bare å spørre.", "id": "mimirOpenerMessage" }, messageContainer);
-            addMimirElement("div", { "textContent": "Ellers svarer jeg blant annet på spørsmål om frakt, retur, kansellering eller sporing", "id": "mimirOpenerMessage" }, messageContainer);
         }
 
         toggleFailedToConnect(false);
@@ -199,6 +197,4 @@ document.addEventListener("click", (e) => {
 });
 
 // If running on localhost we want to show the chat by default
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    toggleChat()
-}
+toggleChat()
