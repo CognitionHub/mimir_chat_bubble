@@ -1,19 +1,24 @@
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'ws://localhost:8000'
-    : 'wss://cognition-hub-backend.azurewebsites.net';
+    : 'wss://api.cognitionhub.no';
 const API_KEY = "sdlfkgh-glsiygewoi--golsihgioweg"
 const OPENER_MESSAGE = "Hei, hvordan kan jeg hjelpe deg?"
 
-const toggleTryingToConnect = (show) => {
-    const isShowing = document.getElementById("mimirLoadingState");
+const toggleFailedToConnect = (show) => {
+    const isShowing = document.getElementById("mimirFailedState");
     if (isShowing && !show) {
         isShowing.remove();
     }
 
     if (!isShowing && show) {
-        const loadingState = addMimirElement("div", { "id": "mimirLoadingState" }, messageContainer);
-        addMimirElement("div", { "id": "mimirSpinner" }, loadingState)
-        addMimirElement("div", { "id": "mimirLoadingText", "textContent": "Oppretter tilkobling..." }, loadingState)
+        const loadingState = addMimirElement("div", {
+            "id": "mimirFailedState", "onclick": () => {
+                ws = null;
+                initiateConversation();
+            }
+        }, messageContainer);
+        addMimirElement("i", { "className": "fas fa-exclamation-circle fa-lg" }, loadingState)
+        addMimirElement("div", { "id": "mimirLoadingText", "textContent": "Klarte ikke å koble til, trykk for å prøve på nytt" }, loadingState)
         scrollToBottom();
     }
 }
@@ -21,14 +26,9 @@ const toggleTryingToConnect = (show) => {
 let ws;
 
 let lastChunkType = null;
-let showingTryingToConnect = false;
 const initiateConversation = () => {
-    if (ws && ws.readyState !== WebSocket.CLOSED) {
+    if (ws || chat.style.display === "none") {
         return;
-    }
-
-    if (ws) {
-        ws.close()
     }
 
     ws = new WebSocket(API_URL + "/chat" + "?customer_id=" + crypto.randomUUID() + "&company_name=" + "skopus" + "&api_key=" + API_KEY);
@@ -39,7 +39,7 @@ const initiateConversation = () => {
             addMimirElement("div", { "textContent": OPENER_MESSAGE, "id": "mimirOpenerMessage" }, messageContainer);
         }
 
-        toggleTryingToConnect(false);
+        toggleFailedToConnect(false);
     });
 
     ws.addEventListener('message', (event) => {
@@ -73,8 +73,7 @@ const initiateConversation = () => {
     });
 
     ws.addEventListener('close', () => {
-        showingTryingToConnect = true;
-        toggleTryingToConnect(true);
+        toggleFailedToConnect(true);
     });
 };
 
@@ -97,6 +96,7 @@ const toggleChat = () => {
         chat.style.display = "none";
     } else {
         chat.style.display = "flex";
+        initiateConversation();
     }
 }
 
@@ -126,7 +126,6 @@ const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
             addMimirElement("div", { "textContent": text, "className": "mimirUserMessage" }, messageContainer);
             ws.send(text);
         } else {
-            initiateConversation()
             console.error("WebSocket is not open. readyState: ", ws.readyState);
             return;
         }
@@ -189,11 +188,6 @@ const sendIcon = addMimirElement("i", { "className": "fas fa-paper-plane fa-lg",
 const header = addMimirElement("div", { "id": "mimirHeader" }, chat)
 const topText = addMimirElement("div", { "id": "mimirTopText", "textContent": `Chat` }, header)
 const closeIcon = addMimirElement("i", { "className": "fas fa-times fa-lg", "id": "mimirChatIcon", "id": "mimirCloseIcon", "onclick": toggleChat }, header)
-
-toggleTryingToConnect(true)
-initiateConversation();
-setInterval(initiateConversation, 10000);
-
 
 // Hide chat if clicked outside of chat
 document.addEventListener("click", (e) => {
