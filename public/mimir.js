@@ -4,6 +4,18 @@ const API_URL = window.location.hostname === 'localhost' || window.location.host
 const API_KEY = "sdlfkgh-glsiygewoi--golsihgioweg"
 const OPENER_MESSAGE = "Hei, hvordan kan jeg hjelpe deg?"
 
+function removePs(text) {
+    text = text.replace(/^<p> | <\/p>$/g, '');
+    return text
+}
+
+function convertMarkdownToHTML(text) {
+    text = removePs(text);
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+    return text;
+}
+
 const toggleFailedToConnect = (show) => {
     const isShowing = document.getElementById("mimirFailedState");
     if (isShowing && !show) {
@@ -32,8 +44,11 @@ const initiateConversation = () => {
     }
 
     ws = new WebSocket(API_URL + "/chat" + "?customer_id=" + window.$mimirCustomerID + "&company_name=" + window.$mimirCompany + "&api_key=" + API_KEY);
+    setLoadingState("Kobler til...");
 
     ws.addEventListener('open', () => {
+        clearLoadingState();
+
         const openerMessage = document.getElementById("mimirOpenerMessage");
         if (!openerMessage) {
             addMimirElement("div", { "textContent": OPENER_MESSAGE, "id": "mimirOpenerMessage" }, messageContainer);
@@ -53,7 +68,7 @@ const initiateConversation = () => {
 
             chunkContent.messages.forEach(({ content, sender }) => {
                 const id = sender == "customer" ? "mimirUserMessage" : "mimirBotMessage";
-                addMimirElement("div", { "textContent": content, "className": id }, messageContainer);
+                addMimirElement("div", { "innerHTML": convertMarkdownToHTML(content), "className": id }, messageContainer);
             });
             scrollToBottom();
         }
@@ -63,10 +78,7 @@ const initiateConversation = () => {
         }
 
         if (chunkType === "token" || chunkType === "full_message") {
-            const currentState = document.getElementById("mimirLoadingState");
-            if (currentState) {
-                currentState.remove();
-            }
+            clearLoadingState();
             addMessage(chunkContent, false, lastChunkType != "token", chunkType === "full_message");
         }
         lastChunkType = chunkType;
@@ -74,6 +86,7 @@ const initiateConversation = () => {
 
     ws.addEventListener('close', () => {
         toggleFailedToConnect(true);
+        clearLoadingState();
     });
 };
 
@@ -111,6 +124,13 @@ const setLoadingState = (loadingText) => {
     addMimirElement("div", { "id": "mimirLoadingText", "textContent": loadingText }, loadingState)
     scrollToBottom();
 }
+const clearLoadingState = () => {
+    const loadingState = document.getElementById("mimirLoadingState");
+    if (loadingState) {
+        loadingState.remove();
+    }
+}
+
 let currentMessage = null;
 let isCurrentlyAnswering = false;
 const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
@@ -123,7 +143,7 @@ const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
         input.focus();
 
         if (ws && ws.readyState === WebSocket.OPEN) {
-            addMimirElement("div", { "textContent": text, "className": "mimirUserMessage" }, messageContainer);
+            addMimirElement("div", { "innerHTML": text, "className": "mimirUserMessage" }, messageContainer);
             ws.send(text);
         } else {
             console.error("WebSocket is not open. readyState: ", ws.readyState);
@@ -135,9 +155,10 @@ const addMessage = (text, isUser, isFirstToken, isFullMessage) => {
         sendIcon.style.opacity = "0.3";
     } else {
         if (isFirstToken) {
-            currentMessage = addMimirElement("div", { "className": "mimirBotMessage", "textContent": text }, messageContainer);
+            currentMessage = addMimirElement("div", { "className": "mimirBotMessage", "innerHTML": text }, messageContainer);
         } else {
-            currentMessage.textContent = isFullMessage ? text : currentMessage.textContent + text;
+            text = isFullMessage ? text : removePs(currentMessage.innerHTML) + text;
+            currentMessage.innerHTML = convertMarkdownToHTML(text);
         }
 
         if (isFullMessage) {
