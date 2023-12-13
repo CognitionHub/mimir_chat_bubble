@@ -10,9 +10,6 @@ liveReloadServer.watch(path.join(__dirname, 'public'));
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}!`);
-    import('open').then(open => {
-        open.default(`http://localhost:${port}`);
-    });
+    console.log(`Bubble ready on http://localhost:${port}`);
 })
 
